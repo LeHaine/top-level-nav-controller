@@ -96,7 +96,6 @@ class TopLevelNavController(
         if (selectedFragment == null) selectedFragment =
             fragmentManager.findFragmentByTag(newlySelectedItemTag) as NavHostFragment
 
-//        selectedFragment.navController.setGraph(navGraphId, args)
         if (destinationId != navGraphId) {
             val navController = selectedFragment.navController
             val graph = navController.graph
@@ -157,8 +156,6 @@ class TopLevelNavController(
     private fun initializeBottomNavView() {
         checkNotNull(bottomNavView) { "You must set bottomNavView before initializing" }
         bottomNavView?.apply {
-            Log.d("ASD", selectedItemId.toString())
-            Log.d("ASD", graphIdToTagMap.toString())
             selectedItemTag = graphIdToTagMap[selectedItemId]
             val firstFragmentTag = graphIdToTagMap[firstFragmentGraphId]
             isOnFirstFragment = selectedItemTag == firstFragmentTag
