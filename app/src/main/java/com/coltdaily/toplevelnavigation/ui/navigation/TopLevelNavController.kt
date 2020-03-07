@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.res.Resources.NotFoundException
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.util.SparseArray
 import android.util.SparseIntArray
 import androidx.annotation.IdRes
@@ -22,6 +21,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import com.coltdaily.toplevelnavigation.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 /**
  * Created by Colt Daily on 3/6/20.
@@ -45,7 +45,7 @@ class TopLevelNavController(
     private var isOnFirstFragment = false
 
     private var bottomNavView: BottomNavigationView? = null
-
+    private var navigationView: NavigationView? = null
 
     init {
         // Create a NavHostFragment for each NavGraph ID
@@ -74,11 +74,11 @@ class TopLevelNavController(
     }
 
     @SuppressLint("ResourceType")
-    fun navigate(@NavigationRes navGraphId: Int, args: Bundle?) {
-        navigate(navGraphId, navGraphIdToGraphId[navGraphId], args)
+    fun navigate(@NavigationRes navGraphId: Int, args: Bundle? = null) {
+        navigate(navGraphId, navGraphId, args)
     }
 
-    fun navigate(@NavigationRes navGraphId: Int, @IdRes destinationId: Int, args: Bundle?) {
+    fun navigate(@NavigationRes navGraphId: Int, @IdRes destinationId: Int, args: Bundle? = null) {
         check(navGraphIds.contains(navGraphId)) {
             "The navGraphId must have been initialized with the top level list of graph ids"
         }
@@ -121,15 +121,21 @@ class TopLevelNavController(
                 val menuItem = menu.findItem(graph.id)
                 if (menuItem != null && selectedItemId != menuItem.itemId) {
                     menuItem.isChecked = true
+                } else {
+                    uncheckBottomNavView()
                 }
             }
-
         }
     }
 
     fun setupWithBottomNavigation(view: BottomNavigationView) {
         bottomNavView = view
         initializeBottomNavView()
+    }
+
+    fun setupNavigationView(view: NavigationView) {
+        navigationView = view
+        initializeNavigationView()
     }
 
     private fun setupDeepLinks() {
@@ -148,7 +154,6 @@ class TopLevelNavController(
                         selectedItemId = menuItem.itemId
                     }
                 }
-                // TODO drawer handling here
             }
         }
     }
@@ -174,7 +179,12 @@ class TopLevelNavController(
             }
 
             setOnNavigationItemReselectedListener {
-                popBackStack(it.itemId)
+                if (!it.isChecked) {
+                    it.isChecked = true
+                    attach(it.itemId)
+                } else {
+                    popBackStack(it.itemId)
+                }
             }
             fragmentManager.addOnBackStackChangedListener {
                 if (!isOnFirstFragment && !fragmentManager.isOnBackStack(firstFragmentTag)) {
@@ -189,6 +199,44 @@ class TopLevelNavController(
                     }
                 }
             }
+        }
+    }
+
+    private fun initializeNavigationView() {
+        checkNotNull(navigationView) { "You must set navigationView before initializing" }
+        navigationView?.apply {
+            setNavigationItemSelectedListener { item ->
+                // Don't do anything if the state is state has already been saved.
+                if (fragmentManager.isStateSaved) {
+                    false
+                } else {
+                    // uncheck all in bottom nav view if applicable
+                    uncheckBottomNavView()
+
+                    isOnFirstFragment = false
+                    obtainNavHostFragment(selectedItemTag, item.itemId)
+                    attach(item.itemId)
+                }
+            }
+
+            fragmentManager.addOnBackStackChangedListener {
+                selectedNavController.value?.let { controller ->
+                    if (controller.currentDestination == null) {
+                        controller.navigate(controller.graph.id)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun uncheckBottomNavView() {
+        bottomNavView?.apply {
+            menu.setGroupCheckable(0, true, false)
+            for (i in 0 until menu.size()) {
+                menu.getItem(i).isChecked = false
+            }
+            menu.setGroupCheckable(0, true, true)
+            selectedItemId = 0
         }
     }
 

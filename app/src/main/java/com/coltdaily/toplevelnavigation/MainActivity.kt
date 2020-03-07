@@ -7,13 +7,16 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.coltdaily.toplevelnavigation.ui.TopLevelNavigator
 import com.coltdaily.toplevelnavigation.ui.navigation.TopLevelNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity(), TopLevelNavigator {
 
     private val navGraphIds = listOf(
         R.navigation.home_navigation,
         R.navigation.dashboard_navigation,
-        R.navigation.notifications_navigation
+        R.navigation.notifications_navigation,
+        R.navigation.settings_navigation,
+        R.navigation.profile_navigation
     )
     private lateinit var topLevelNav: TopLevelNavController
 
@@ -21,14 +24,17 @@ class MainActivity : AppCompatActivity(), TopLevelNavigator {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val navView: BottomNavigationView = findViewById(R.id.nav_view)
+        val bottomNavView: BottomNavigationView = findViewById(R.id.bottom_nav_view)
+        val navView: NavigationView = findViewById(R.id.navigation_view)
+
         topLevelNav = TopLevelNavController(
             navGraphIds,
             supportFragmentManager,
             R.id.nav_host_container,
             intent
         )
-        topLevelNav.setupWithBottomNavigation(navView)
+        topLevelNav.setupWithBottomNavigation(bottomNavView)
+        topLevelNav.setupNavigationView(navView)
 
         topLevelNav.selectedNavController.observe(this, Observer { navController ->
             setupActionBarWithNavController(navController)

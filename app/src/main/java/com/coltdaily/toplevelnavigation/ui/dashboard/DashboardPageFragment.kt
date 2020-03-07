@@ -27,7 +27,7 @@ class DashboardPageFragment : Fragment() {
             findTopLevelNavController().navigate(
                 R.navigation.notifications_navigation,
                 R.id.notificationDetailFragment,
-                NotificationDetailFragmentArgs("3").toBundle()
+                NotificationDetailFragmentArgs("Notification 3").toBundle()
             )
         }
         return root

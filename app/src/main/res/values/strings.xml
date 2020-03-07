@@ -3,4 +3,21 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <string name="settings">Settings</string>
+    <string name="profile">Profile</string>
+    <string name="notification">Notification</string>
+    <string name="notification_details">Notification Details!</string>
+    <string name="i_am_home">I am home!</string>
+    <string name="just_a_page_on_my_dashboard">Just a page on my dashboard!</string>
+    <string name="go_to_notification_page_3">Go to notification page 3</string>
+    <string name="this_is_the_dashboard">This is the dashboard!</string>
+    <string name="go_to_next_dashboard_page">Go to next dashboard page</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_user_this_is_your_profile">Hello User! This is your profile.</string>
+    <string name="setting">Setting!</string>
+    <string name="setting_details">Setting Details</string>
+    <string name="check_out_setting_2">Check out Setting 2!</string>
+    <string name="see_your_profile">See your profile</string>
 </resources>

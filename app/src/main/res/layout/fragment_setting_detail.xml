@@ -8,15 +8,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
-        android:text="@string/notification_details"
+        android:text="@string/setting_details"
         android:textSize="24sp"
+        android:textColor="@color/colorPrimary"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/text_notification"
+        android:id="@+id/text_setting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/notification"
+        android:text="@string/setting"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
