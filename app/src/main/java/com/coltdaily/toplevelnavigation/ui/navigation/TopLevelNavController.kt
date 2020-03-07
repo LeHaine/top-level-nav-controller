@@ -91,17 +91,17 @@ class TopLevelNavController(
         selectedFragment?.let {
             fragmentManager.beginTransaction().hide(it).commitNow()
         }
-        // attach the fragment without change the current nav controler
+        // attach the fragment without change the current nav controller
         attachNoNavControllerChange(navGraphIdToGraphId[navGraphId])
         if (selectedFragment == null) selectedFragment =
             fragmentManager.findFragmentByTag(newlySelectedItemTag) as NavHostFragment
 
-        if (destinationId != navGraphId) {
-            val navController = selectedFragment.navController
-            val graph = navController.graph
+        val navController = selectedFragment.navController
+        val graph = navController.graph
 
-            // pop to beginning of graph and navigate to the destination
-            Handler().post {
+        // pop to beginning of graph and navigate to the destination
+        Handler().post {
+            if (destinationId != navGraphId) {
                 graph.findNode(destinationId)
                     ?: throw IllegalStateException(
                         "unknown destination during top level navigation: "
@@ -112,20 +112,27 @@ class TopLevelNavController(
                         .setPopUpTo(graph.startDestination, false)
                         .build()
                 )
-                fragmentManager.beginTransaction().show(selectedFragment).commit()
-                _selectedNavController.value = navController
+            } else {
+                navController.navigate(
+                    graph.startDestination, args, NavOptions.Builder()
+                        .setPopUpTo(graph.startDestination, true)
+                        .build()
+                )
             }
+            fragmentManager.beginTransaction().show(selectedFragment).commit()
+            _selectedNavController.value = navController
+        }
 
-            // check to see if the graph is part of the bottom nav view and if so let it handle it
-            bottomNavView?.apply {
-                val menuItem = menu.findItem(graph.id)
-                if (menuItem != null && selectedItemId != menuItem.itemId) {
-                    menuItem.isChecked = true
-                } else {
-                    uncheckBottomNavView()
-                }
+        // check to see if the graph is part of the bottom nav view and if so let it handle it
+        bottomNavView?.apply {
+            val menuItem = menu.findItem(graph.id)
+            if (menuItem != null && selectedItemId != menuItem.itemId) {
+                menuItem.isChecked = true
+            } else {
+                uncheckBottomNavView()
             }
         }
+
     }
 
     fun setupWithBottomNavigation(view: BottomNavigationView) {
